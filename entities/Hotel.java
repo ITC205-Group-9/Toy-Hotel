@@ -122,12 +122,27 @@ public class Hotel {
 
 
 	public void addServiceCharge(int roomId, ServiceType serviceType, double cost) {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if no active booking associated with the room identified by roomID can be found
+        // After this method is called:
+        //      1. A ServiceCharge should have been added to the active booking.
+        Booking booking = activeBookingsByRoomId.get(roomId);
+        if (booking == null) {
+            throw new RuntimeException("The room has not checked in yet!");
+        } else {
+            booking.addServiceCharge(serviceType, cost);
+        }
 	}
 
 	
 	public void checkout(int roomId) {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if no active booking associated with the room identified by roomID can be found
+        // The Booking referenced by confirmationNumber should have a state of CHECKED_OUT
+        Booking booking = activeBookingsByRoomId.get(roomId);
+        if (booking == null) {
+            throw new RuntimeException("The room has not checked in yet!");
+        } else {
+            booking.checkOut();
+        }
 	}
 
 
