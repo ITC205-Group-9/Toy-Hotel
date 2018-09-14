@@ -1,8 +1,5 @@
 package hotel.checkout;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import hotel.credit.CreditAuthorizer;
 import hotel.credit.CreditCard;
 import hotel.credit.CreditCardType;
@@ -11,6 +8,9 @@ import hotel.entities.Guest;
 import hotel.entities.Hotel;
 import hotel.entities.ServiceCharge;
 import hotel.utils.IOUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class CheckoutCTL {
 
@@ -98,7 +98,30 @@ public class CheckoutCTL {
 
 	
 	public void creditDetailsEntered(CreditCardType type, int number, int ccv) {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if state is not CREDIT
+		//	creates a new CreditCard
+		//	calls CreditAuthorizer.authorize()
+		//	if approved
+		//		calls hotel.checkout()
+		//		calls UI.displayMessage() with Credit card debited message
+		//		sets state to COMPLETED
+		//		sets UI state to COMPLETED
+		//	else
+		//			calls UI.displayMessage() with Credit not approved message
+
+		if (state != State.CREDIT) {
+		    throw new RuntimeException("The state is not credit!");
+        }
+
+        CreditCard customerCard = new CreditCard(type, number, ccv);
+		if (CreditAuthorizer.getInstance().authorize(customerCard, total)) {
+		    hotel.checkout(roomId);
+		    checkoutUI.displayMessage("You paid $" + total + " with your card!");
+		    state = State.COMPLETED;
+		    checkoutUI.setState(CheckoutUI.State.COMPLETED);
+        } else {
+		    checkoutUI.displayMessage("Your credit is not approved!");
+        }
 	}
 
 
