@@ -98,9 +98,8 @@ public class Hotel {
         //      3. The booking should be returned from findBookingByConfirmationNumber()
         Booking booking = room.book(guest, arrivalDate, stayLength, occupantNumber, creditCard);
         if (booking != null) {
-            long confirmationNumber = booking.generateConfirmationNumber(room.getId(), arrivalDate);
-            bookingsByConfirmationNumber.put(confirmationNumber, booking);
-            return confirmationNumber;
+            bookingsByConfirmationNumber.put(booking.getConfirmationNumber(), booking);
+            return booking.getConfirmationNumber();
         }
 		return 0L;
 	}
@@ -116,6 +115,7 @@ public class Hotel {
 			throw new RuntimeException("There is not booking for the confirmation number exists!");
 		} else {
 		    booking.checkIn();
+		    booking.getRoom().checkIn();
 		    activeBookingsByRoomId.put(booking.getRoom().getId(), booking);
         }
 	}
