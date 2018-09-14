@@ -13,7 +13,6 @@ public class Hotel {
 	public Map<RoomType, Map<Integer,Room>> roomsByType;
 	public Map<Long, Booking> bookingsByConfirmationNumber;
 	public Map<Integer, Booking> activeBookingsByRoomId;
-	private Scanner scan;
 	
 	
 	public Hotel() {
@@ -25,7 +24,6 @@ public class Hotel {
 		}
 		bookingsByConfirmationNumber = new HashMap<>();
 		activeBookingsByRoomId = new HashMap<>();
-		scan = new Scanner(System.in);
 	}
 
 	
@@ -115,7 +113,7 @@ public class Hotel {
 			throw new RuntimeException("There is not booking for the confirmation number exists!");
 		} else {
 		    booking.checkIn();
-		    booking.getRoom().checkIn();
+		    booking.getRoom().checkin();
 		    activeBookingsByRoomId.put(booking.getRoom().getId(), booking);
         }
 	}
