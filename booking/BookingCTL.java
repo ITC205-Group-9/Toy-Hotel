@@ -1,9 +1,5 @@
 package hotel.booking;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import hotel.credit.CreditAuthorizer;
 import hotel.credit.CreditCard;
 import hotel.credit.CreditCardType;
@@ -12,6 +8,10 @@ import hotel.entities.Hotel;
 import hotel.entities.Room;
 import hotel.entities.RoomType;
 import hotel.utils.IOUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class BookingCTL {
 	
@@ -137,7 +137,29 @@ public class BookingCTL {
 
 
 	public void creditDetailsEntered(CreditCardType type, int number, int ccv) {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if state is not CREDIT
+		//	creates a new CreditCard
+		//	calls CreditAuthorizer.authorise()
+		//	if approved
+		//		calls hotel.book()
+		//		calls UI.displayConfirmedBooking()
+		//		sets state to COMPLETED
+		//		sets UI state to COMPLETED
+		//	else
+		//		calls UI.displayMessage with credit not authorised message
+
+		if (state != State.CREDIT) {
+		    throw new RuntimeException("It is not credit!");
+        }
+        CreditCard newCard = new CreditCard(type, number, ccv);
+		if(CreditAuthorizer.getInstance().authorize(newCard, cost)) {
+		    long confirmationNumber = hotel.book(room, guest, arrivalDate, stayLength, occupantNumber, newCard);
+		    bookingUI.displayConfirmedBooking(room.getDescription(), room.getId(), arrivalDate, stayLength, guest.getName(), newCard.getVendor(), newCard.getNumber(), cost, confirmationNumber);
+		    state = State.COMPLETED;
+		    bookingUI.setState(BookingUI.State.COMPLETED);
+        } else {
+		    bookingUI.displayMessage("Your credit card is not authorised!");
+        }
 	}
 
 
