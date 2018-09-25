@@ -102,7 +102,7 @@ public class CheckoutCTL {
 		//	creates a new CreditCard
 		//	calls CreditAuthorizer.authorize()
 		//	if approved
-		//		calls hotel.checkout()
+		//		calls entities.checkout()
 		//		calls UI.displayMessage() with Credit card debited message
 		//		sets state to COMPLETED
 		//		sets UI state to COMPLETED

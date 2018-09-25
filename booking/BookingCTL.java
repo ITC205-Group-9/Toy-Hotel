@@ -141,7 +141,7 @@ public class BookingCTL {
 		//	creates a new CreditCard
 		//	calls CreditAuthorizer.authorise()
 		//	if approved
-		//		calls hotel.book()
+		//		calls entities.book()
 		//		calls UI.displayConfirmedBooking()
 		//		sets state to COMPLETED
 		//		sets UI state to COMPLETED
