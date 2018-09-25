@@ -62,7 +62,7 @@ public class Hotel {
 
 	
 	public Booking findActiveBookingByRoomId(int roomId) {
-		Booking booking = activeBookingsByRoomId.get(roomId);;
+		Booking booking = activeBookingsByRoomId.get(roomId);
 		return booking;
 	}
 
@@ -84,27 +84,63 @@ public class Hotel {
 		return bookingsByConfirmationNumber.get(confirmationNumber);
 	}
 
-	
+
 	public long book(Room room, Guest guest, 
 			Date arrivalDate, int stayLength, int occupantNumber,
 			CreditCard creditCard) {
-		// TODO Auto-generated method stub
-		return 0L;		
+        // return unique confirmation number for a booking
+        // The confirmation number has this format: ddMMYYYYrrr, where ddMMYYYY is the date of the booking and rrr is the room Id
+        // After calling this method:
+        //      1. A booking should exist for the room (this method should call room.book())
+        //      2. The room should not be available for the specified arrivalDate and staylength
+        //      3. The booking should be returned from findBookingByConfirmationNumber()
+        Booking booking = room.book(guest, arrivalDate, stayLength, occupantNumber, creditCard);
+        if (booking != null) {
+            bookingsByConfirmationNumber.put(booking.getConfirmationNumber(), booking);
+            return booking.getConfirmationNumber();
+        }
+		return 0L;
 	}
 
 	
 	public void checkin(long confirmationNumber) {
-		// TODO Auto-generated method stub
+	    // throws a RuntimeException if no booking for confirmation number exists
+        // After calling this method:
+        //      1. The Booking referenced by confirmationNumber should be returned by getActiveBookingByRoomId()
+        //      2. The Booking referenced by confirmationNumber should have a state of CHECKED_IN
+	    Booking booking = findBookingByConfirmationNumber(confirmationNumber);
+		if ( booking == null) {
+			throw new RuntimeException("There is not booking for the confirmation number exists!");
+		} else {
+		    booking.checkIn();
+		    booking.getRoom().checkin();
+		    activeBookingsByRoomId.put(booking.getRoom().getId(), booking);
+        }
 	}
 
 
 	public void addServiceCharge(int roomId, ServiceType serviceType, double cost) {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if no active booking associated with the room identified by roomID can be found
+        // After this method is called:
+        //      1. A ServiceCharge should have been added to the active booking.
+        Booking booking = activeBookingsByRoomId.get(roomId);
+        if (booking == null) {
+            throw new RuntimeException("The room has not checked in yet!");
+        } else {
+            booking.addServiceCharge(serviceType, cost);
+        }
 	}
 
 	
 	public void checkout(int roomId) {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if no active booking associated with the room identified by roomID can be found
+        // The Booking referenced by confirmationNumber should have a state of CHECKED_OUT
+        Booking booking = activeBookingsByRoomId.get(roomId);
+        if (booking == null) {
+            throw new RuntimeException("The room has not checked in yet!");
+        } else {
+            booking.checkOut();
+        }
 	}
 
 

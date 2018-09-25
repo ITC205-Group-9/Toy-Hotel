@@ -60,18 +60,40 @@ public class Room {
 
 
 	public Booking book(Guest guest, Date arrivalDate, int stayLength, int numberOfOccupants, CreditCard creditCard) {
-		// TODO Auto-generated method stub
-		return null;		
+		// returns a new Booking
+        //  After calling this method:
+        //      1. isAvailable() should return false for any arrivalDates and stayLengths that clash with the new booking
+        //      2. the booking state should be PENDING
+		return new Booking(guest, this, arrivalDate, stayLength, numberOfOccupants, creditCard);
 	}
 
 
 	public void checkin() {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if the rooms state is not READY
+        //	After calling this method
+        //		1. The rooms state should be OCCUPIED
+        //      2. the booking state should be CHECKED_IN
+
+        if (state != State.READY) {
+            throw new RuntimeException("The room has not been ready!");
+        } else {
+            state = State.OCCUPIED;
+        }
 	}
 
 
 	public void checkout(Booking booking) {
-		// TODO Auto-generated method stub
+		// throws a RuntimeException if the rooms state is not OCCUPIED
+        //	After calling this method
+        //		1. The rooms state should be READY
+        //      2. the booking state should be CHECKED_OUT
+
+        if (state != State.OCCUPIED) {
+            throw new RuntimeException("The room has not been occupied!");
+        } else {
+            state = State.READY;
+            booking.checkOut();
+        }
 	}
 
 
