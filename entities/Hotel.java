@@ -1,11 +1,11 @@
 package hotel.entities;
 
+import hotel.credit.CreditCard;
+import hotel.utils.IOUtils;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import hotel.credit.CreditCard;
-import hotel.utils.IOUtils;
 
 public class Hotel {
 	
@@ -95,15 +95,16 @@ public class Hotel {
         //      2. The room should not be available for the specified arrivalDate and staylength
         //      3. The booking should be returned from findBookingByConfirmationNumber()
         Booking booking = room.book(guest, arrivalDate, stayLength, occupantNumber, creditCard);
+        long confirmationNumber = 0L;
         if (booking != null) {
-            bookingsByConfirmationNumber.put(booking.getConfirmationNumber(), booking);
-            return booking.getConfirmationNumber();
+        	confirmationNumber = booking.getConfirmationNumber();
+            bookingsByConfirmationNumber.put(confirmationNumber, booking);
         }
-		return 0L;
+		return confirmationNumber;
 	}
 
 	
-	public void checkin(long confirmationNumber) {
+	public void checkIn(long confirmationNumber) {
 	    // throws a RuntimeException if no booking for confirmation number exists
         // After calling this method:
         //      1. The Booking referenced by confirmationNumber should be returned by getActiveBookingByRoomId()
@@ -132,7 +133,7 @@ public class Hotel {
 	}
 
 	
-	public void checkout(int roomId) {
+	public void checkOut(int roomId) {
 		// throws a RuntimeException if no active booking associated with the room identified by roomID can be found
         // The Booking referenced by confirmationNumber should have a state of CHECKED_OUT
         Booking booking = activeBookingsByRoomId.get(roomId);

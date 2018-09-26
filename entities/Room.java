@@ -1,11 +1,11 @@
 package hotel.entities;
 
+import hotel.credit.CreditCard;
+import hotel.utils.IOUtils;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import hotel.credit.CreditCard;
-import hotel.utils.IOUtils;
 
 public class Room {
 	
@@ -64,7 +64,9 @@ public class Room {
         //  After calling this method:
         //      1. isAvailable() should return false for any arrivalDates and stayLengths that clash with the new booking
         //      2. the booking state should be PENDING
-		return new Booking(guest, this, arrivalDate, stayLength, numberOfOccupants, creditCard);
+		Booking book = new Booking(guest, this, arrivalDate, stayLength, numberOfOccupants, creditCard);
+		bookings.add(book);
+		return book;
 	}
 
 
