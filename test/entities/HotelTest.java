@@ -6,37 +6,37 @@ import hotel.credit.CreditCardType;
 import hotel.entities.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
-@ExtendWith(MockitoExtension.class)
 class HotelTest {
 
-    @Mock Room room;
-    @Mock Guest guest;
-    @Mock CreditCard card;
-    @Mock Booking booking;
-    Hotel hotel;
+    Room room;
+    Guest guest;
+    CreditCard card;
+    @Mock Booking mockBooking;
+    @Mock Room mockRoom;
+    @InjectMocks Hotel hotel;
 
     Date arrivalDate;
     int stayLength;
     int occupantNumber;
     long confirmationNumber;
-    // testing steps 1. arrange mock object, initial values... 2. act 3. assert value
 
     @BeforeEach
     void setUp() throws ParseException {
@@ -57,73 +57,70 @@ class HotelTest {
         guest = new Guest("Stephen", "Chou", 4667891);
         card = new CreditCard(CreditCardType.VISA, 2, 2);
 
+
     }
 
     @Test
     public void testBook() {
-        room = hotel.findAvailableRoom(RoomType.DOUBLE, arrivalDate, stayLength);
-        assertNotNull(room);
-        confirmationNumber = hotel.book(room, guest, arrivalDate, stayLength, occupantNumber, card);
-        assertNotEquals(0L, confirmationNumber);
-        booking = hotel.findBookingByConfirmationNumber(confirmationNumber);
-        assertNotNull(booking);
-        assertNull(hotel.findAvailableRoom(RoomType.DOUBLE, arrivalDate, stayLength));
+        confirmationNumber = Long.parseLong("10112018201");
+        when(mockRoom.book(guest, arrivalDate, stayLength, occupantNumber, card)).thenReturn(mockBooking);
+        when(mockBooking.getConfirmationNumber()).thenReturn(confirmationNumber);
+        assertEquals(confirmationNumber, hotel.book(mockRoom, guest, arrivalDate, stayLength, occupantNumber, card));
+        verify(mockRoom, times(1)).book(guest, arrivalDate, stayLength, occupantNumber, card);
+        verify(mockBooking, times(1)).getConfirmationNumber();
     }
+
 
     @Test
     public void testCheckIn() {
-        room = hotel.findAvailableRoom(RoomType.DOUBLE, arrivalDate, stayLength);
-        confirmationNumber = hotel.book(room, guest, arrivalDate, stayLength, occupantNumber, card);
-        hotel.checkin(confirmationNumber);
-        booking = hotel.findActiveBookingByRoomId(room.getId());
-        assertNotNull(booking);
-        assertTrue(booking.isCheckedIn());
+        confirmationNumber = Long.parseLong("10112018201");
+        when(mockRoom.book(guest, arrivalDate, stayLength, occupantNumber, card)).thenReturn(mockBooking);
+        when(mockBooking.getConfirmationNumber()).thenReturn(confirmationNumber);
+        doNothing().when(mockBooking).checkIn();
+        when(mockBooking.getRoom()).thenReturn(mockRoom);
+        when(mockRoom.getId()).thenReturn(201);
+        doNothing().when(mockRoom).checkin();
+        assertEquals(0, hotel.activeBookingsByRoomId.size());
+        hotel.checkIn(hotel.book(mockRoom, guest, arrivalDate, stayLength, occupantNumber, card));
+        assertEquals(1, hotel.activeBookingsByRoomId.size());
+        verify(mockBooking, times(1)).checkIn();
+        verify(mockRoom, times(1)).checkin();
     }
 
     @Test
     public void testCheckInShouldThrowRuntimeExceptionIfNoBookingExists() {
-        Executable e = () -> hotel.checkin(30110);
-        Throwable t = assertThrows(RuntimeException.class, e);
-        assertEquals("There is not booking for the confirmation number exists!", t.getMessage());
+        Executable e = () -> hotel.checkIn(Long.parseLong("10112019201"));
+        assertThrows(RuntimeException.class, e);
     }
 
 
     @Test
     public void testAddServiceCharge() {
-        room = hotel.findAvailableRoom(RoomType.DOUBLE, arrivalDate, stayLength);
-        confirmationNumber = hotel.book(room, guest, arrivalDate, stayLength, occupantNumber, card);
-        hotel.checkin(confirmationNumber);
-        booking = hotel.findBookingByConfirmationNumber(confirmationNumber);
-        assertEquals(0, booking.getCharges().size());
-        hotel.addServiceCharge(room.getId(), ServiceType.ROOM_SERVICE, 20);
-        assertEquals(1, booking.getCharges().size());
+        testCheckIn();
+        doNothing().when(mockBooking).addServiceCharge(ServiceType.ROOM_SERVICE, 20);
+        hotel.addServiceCharge(201, ServiceType.ROOM_SERVICE, 20);
     }
 
 
     @Test
     public void testAddServiceChargeWhenThereIsNoActiveBookingAssociatedWithTheRoom() {
         Executable e = () -> hotel.addServiceCharge(room.getId(), ServiceType.ROOM_SERVICE, 20);
-        Throwable t = assertThrows(RuntimeException.class, e);
-        assertEquals("The room has not checked in yet!", t.getMessage());
+        assertThrows(RuntimeException.class, e);
     }
 
 
     @Test
     public void testCheckOut() {
-        room = hotel.findAvailableRoom(RoomType.DOUBLE, arrivalDate, stayLength);
-        confirmationNumber = hotel.book(room, guest, arrivalDate, stayLength, occupantNumber, card);
-        hotel.checkin(confirmationNumber);
-        booking = hotel.findBookingByConfirmationNumber(confirmationNumber);
-        hotel.checkout(room.getId());
-        assertTrue(booking.isCheckedOut());
+        testCheckIn();
+        doNothing().when(mockBooking).checkOut();
+        hotel.checkOut(201);
     }
 
 
     @Test
     public void testCheckOutWhenThereIsNoActiveBookingAssociatedWithTheRoom() {
-        Executable e = () -> hotel.checkout(room.getId());
-        Throwable t = assertThrows(RuntimeException.class, e);
-        assertEquals("The room has not checked in yet!", t.getMessage());
+        Executable e = () -> hotel.checkOut(301);
+        assertThrows(RuntimeException.class, e);
     }
 
 }

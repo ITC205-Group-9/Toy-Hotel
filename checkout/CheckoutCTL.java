@@ -102,7 +102,7 @@ public class CheckoutCTL {
 		//	creates a new CreditCard
 		//	calls CreditAuthorizer.authorize()
 		//	if approved
-		//		calls entities.checkout()
+		//		calls entities.checkOut()
 		//		calls UI.displayMessage() with Credit card debited message
 		//		sets state to COMPLETED
 		//		sets UI state to COMPLETED
@@ -115,7 +115,7 @@ public class CheckoutCTL {
 
         CreditCard customerCard = new CreditCard(type, number, ccv);
 		if (CreditAuthorizer.getInstance().authorize(customerCard, total)) {
-		    hotel.checkout(roomId);
+		    hotel.checkOut(roomId);
 		    checkoutUI.displayMessage("You paid $" + total + " with your card!");
 		    state = State.COMPLETED;
 		    checkoutUI.setState(CheckoutUI.State.COMPLETED);

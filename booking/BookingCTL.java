@@ -113,7 +113,7 @@ public class BookingCTL {
 		room = hotel.findAvailableRoom(selectedRoomType, arrivalDate, stayLength);
 		
 		if (room == null) {				
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(arrivalDate);
 			calendar.add(Calendar.DATE, stayLength);
@@ -137,20 +137,10 @@ public class BookingCTL {
 
 
 	public void creditDetailsEntered(CreditCardType type, int number, int ccv) {
-		// throws a RuntimeException if state is not CREDIT
-		//	creates a new CreditCard
-		//	calls CreditAuthorizer.authorise()
-		//	if approved
-		//		calls entities.book()
-		//		calls UI.displayConfirmedBooking()
-		//		sets state to COMPLETED
-		//		sets UI state to COMPLETED
-		//	else
-		//		calls UI.displayMessage with credit not authorised message
-
 		if (state != State.CREDIT) {
-		    throw new RuntimeException("It is not credit!");
-        }
+			throw new RuntimeException(String.format("BookingCTL: creditDetailsEntered : bad state : %s", state));
+		}
+
         CreditCard newCard = new CreditCard(type, number, ccv);
 		if(CreditAuthorizer.getInstance().authorize(newCard, cost)) {
 		    long confirmationNumber = hotel.book(room, guest, arrivalDate, stayLength, occupantNumber, newCard);

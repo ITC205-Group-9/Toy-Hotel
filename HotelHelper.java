@@ -1,19 +1,14 @@
 package hotel;
 
+import hotel.credit.CreditCard;
+import hotel.credit.CreditCardType;
+import hotel.entities.*;
+import hotel.utils.IOUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
-
-import hotel.credit.CreditCard;
-import hotel.credit.CreditCardType;
-import hotel.entities.Booking;
-import hotel.entities.Guest;
-import hotel.entities.Hotel;
-import hotel.entities.Room;
-import hotel.entities.RoomType;
-import hotel.entities.ServiceType;
-import hotel.utils.IOUtils;
 
 public class HotelHelper {
 
@@ -38,7 +33,7 @@ public class HotelHelper {
 		Room room = hotel.findAvailableRoom(RoomType.TWIN_SHARE, date, 1);
 		long confNo = hotel.book(room, guest, date, 1, 2, card);
 		Booking booking = hotel.findBookingByConfirmationNumber(confNo);
-		hotel.checkin(confNo);
+		hotel.checkIn(confNo);
 		booking.addServiceCharge(ServiceType.ROOM_SERVICE, 7.00);
 		
 		IOUtils.trace("HotelHelper");

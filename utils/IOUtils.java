@@ -1,14 +1,14 @@
 package hotel.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Scanner;
-
 import hotel.credit.CreditCardType;
 import hotel.entities.RoomType;
 import hotel.entities.ServiceType;
 import hotel.exceptions.NullInputException;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Scanner;
 
 public class IOUtils {
 	
@@ -77,7 +77,7 @@ public class IOUtils {
 	
 	
 	public static Date getValidDate(String prompt) {		
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = null;
 
 		IOUtils.outputln(prompt);		
