@@ -18,7 +18,7 @@ public class HotelHelper {
 		//Date date = format.parse("01-01-2001");
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-		Date date = format.parse("01-01-0001");
+		Date date = format.parse("10-12-2018");
 		cal.setTime(date);
 		
 		

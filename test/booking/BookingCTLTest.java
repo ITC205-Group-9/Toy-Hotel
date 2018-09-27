@@ -1,8 +1,6 @@
 package hotel.test.booking;
 
-import hotel.HotelHelper;
 import hotel.booking.BookingCTL;
-import hotel.booking.BookingUI;
 import hotel.credit.CreditAuthorizer;
 import hotel.credit.CreditCard;
 import hotel.credit.CreditCardType;
@@ -10,12 +8,13 @@ import hotel.entities.Guest;
 import hotel.entities.Hotel;
 import hotel.entities.Room;
 import hotel.entities.RoomType;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.text.SimpleDateFormat;
@@ -23,51 +22,45 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 class BookingCTLTest {
 
-    @Mock
-    private Hotel hotel;
-    @Mock
-    CreditCard card;
-    @Mock
-    BookingUI mockBookingUI;
-    @Mock
-    Guest mockGuest;
-    @Mock
-    Room mockRoom;
-    @Mock
-    CreditAuthorizer authorizer;
-    @InjectMocks
-    private BookingCTL bookingCTL;
+    @Mock Hotel mockHotel;
+    @Mock CreditAuthorizer mockCreditAuthorizer;
     Date date;
-    Date anotherDate;
+
+    @InjectMocks
+    BookingCTL bookingCTL;
 
     @BeforeEach
-    void setUp() throws Exception {
-        bookingCTL = new BookingCTL(hotel);
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        date = format.parse("10-12-2018");
+        cal.setTime(date);
+    }
+
+    @Test
+    public void testCreditDetailsEntered() {
+        when(mockHotel.isRegistered(anyInt())).thenReturn(true);
+        when(mockHotel.findGuestByPhoneNumber(anyInt())).thenReturn(new Guest("Steven", "Marrickville", 2));
+        bookingCTL.phoneNumberEntered(anyInt());
+        bookingCTL.roomTypeAndOccupantsEntered(RoomType.TWIN_SHARE, 2);
+        when(mockHotel.findAvailableRoom(any(RoomType.class), any(Date.class), anyInt())).thenReturn(new Room(301, RoomType.TWIN_SHARE));
+        bookingCTL.bookingTimesEntered(date, 2);
+        when(mockCreditAuthorizer.authorize(any(CreditCard.class), anyDouble())).thenReturn(true);
+        when(mockHotel.book(any(Room.class), any(Guest.class), any(Date.class), anyInt(), anyInt(), any(CreditCard.class))).thenReturn(Long.parseLong("20181012301"));
+        bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 1, 1);
     }
 
 
     @Test
-    public void testCreditDetailsEnteredIsNotAuthorized() {
-        bookingCTL.phoneNumberEntered(2);
-        bookingCTL.roomTypeAndOccupantsEntered(RoomType.SINGLE, 1);
-        bookingCTL.bookingTimesEntered(date, 5);
-        bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 6, 123);
-    }
-
-
-    @Test
-    public void testCreditDetailsEnteredWhenStateIsNotCredit() {
-        Executable e = () -> bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 1234, 231);
+    public void testCreditDetailsEnteredThrowExceptionWhenTheStateIsNotCredit() {
+        Executable e = () -> bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 1, 321);
         assertThrows(RuntimeException.class, e);
     }
-
-    @org.junit.jupiter.api.Test
-    void creditDetailsEntered() {
-
-    }
-
 }
