@@ -3,6 +3,7 @@ package hotel;
 import hotel.booking.BookingCTL;
 import hotel.checkin.CheckinCTL;
 import hotel.checkout.CheckoutCTL;
+import hotel.credit.CreditAuthorizer;
 import hotel.entities.Hotel;
 import hotel.service.RecordServiceCTL;
 import hotel.utils.IOUtils;
@@ -10,12 +11,14 @@ import hotel.utils.IOUtils;
 public class Main {
 	
 	private static Hotel hotel;
+	private static CreditAuthorizer authorizer;
 
 	public static void main(String[] args) throws Exception {
 		
 		IOUtils.setTrace(false);
 				
 		hotel = HotelHelper.loadHotel();
+		authorizer = CreditAuthorizer.getInstance();
 		
 		boolean active = true;
 		try {
@@ -81,7 +84,7 @@ public class Main {
 
 	private static void bookRoom() {
 		IOUtils.outputln("\nBooking Room\n");
-		new BookingCTL(hotel).run();
+		new BookingCTL(hotel, authorizer).run();
 	}
 	
 	

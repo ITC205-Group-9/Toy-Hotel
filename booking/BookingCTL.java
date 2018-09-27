@@ -31,11 +31,12 @@ public class BookingCTL {
 	private int occupantNumber;
 	private Date arrivalDate;
 	private int stayLength;
-
+    private CreditAuthorizer creditAuthorizer;
 	
-	public BookingCTL(Hotel hotel) {
+	public BookingCTL(Hotel hotel, CreditAuthorizer creditAuthorizer) {
 		this.bookingUI = new BookingUI(this);
 		this.hotel = hotel;
+		this.creditAuthorizer = creditAuthorizer;
 		state = State.PHONE;
 	}
 
@@ -142,7 +143,7 @@ public class BookingCTL {
 		}
 
         CreditCard newCard = new CreditCard(type, number, ccv);
-		if(CreditAuthorizer.getInstance().authorize(newCard, cost)) {
+		if(creditAuthorizer.authorize(newCard, cost)) {
 		    long confirmationNumber = hotel.book(room, guest, arrivalDate, stayLength, occupantNumber, newCard);
 		    bookingUI.displayConfirmedBooking(room.getDescription(), room.getId(), arrivalDate, stayLength, guest.getName(), newCard.getVendor(), newCard.getNumber(), cost, confirmationNumber);
 		    state = State.COMPLETED;
@@ -155,9 +156,9 @@ public class BookingCTL {
 
 	public void cancel() {
 		IOUtils.trace("BookingCTL: cancel");
-		bookingUI.displayMessage("Booking cancelled");
-		state = State.CANCELLED;
-		bookingUI.setState(BookingUI.State.CANCELLED);
+        bookingUI.displayMessage("Booking cancelled");
+        state = State.CANCELLED;
+        bookingUI.setState(BookingUI.State.CANCELLED);
 	}
 	
 	

@@ -85,7 +85,7 @@ public class RecordServiceUI {
 		while (!completed) {			
 			//enter service type
 			try {
-				serviceType = IOUtils.getValidServiceType("Enter service type");
+				serviceType = IOUtils.getValidServiceType("Enter service type: ");
 			}
 			catch (NullInputException e) {
 				IOUtils.outputln("RecordServiceUI: User cancelled at enter service type");
