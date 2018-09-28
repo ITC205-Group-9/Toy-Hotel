@@ -57,6 +57,19 @@ class BookingCTLTest {
         bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 1, 1);
     }
 
+    @Test
+    public void testCreditDetailsEnteredThenCreditCardIsUnauthorized() {
+        when(mockHotel.isRegistered(anyInt())).thenReturn(true);
+        when(mockHotel.findGuestByPhoneNumber(anyInt())).thenReturn(new Guest("Steven", "Marrickville", 2));
+        bookingCTL.phoneNumberEntered(anyInt());
+        bookingCTL.roomTypeAndOccupantsEntered(RoomType.TWIN_SHARE, 2);
+        when(mockHotel.findAvailableRoom(any(RoomType.class), any(Date.class), anyInt())).thenReturn(new Room(301, RoomType.TWIN_SHARE));
+        bookingCTL.bookingTimesEntered(date, 2);
+        when(mockCreditAuthorizer.authorize(any(CreditCard.class), anyDouble())).thenReturn(false);
+        when(mockHotel.book(any(Room.class), any(Guest.class), any(Date.class), anyInt(), anyInt(), any(CreditCard.class))).thenReturn(Long.parseLong("20181012301"));
+        bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 6, 123);
+    }
+
 
     @Test
     public void testCreditDetailsEnteredThrowExceptionWhenTheStateIsNotCredit() {
