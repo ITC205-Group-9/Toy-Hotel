@@ -70,7 +70,7 @@ public class Room {
 	}
 
 
-	public void checkin() {
+	public void checkIn() {
 		// throws a RuntimeException if the rooms state is not READY
         //	After calling this method
         //		1. The rooms state should be OCCUPIED
@@ -94,9 +94,10 @@ public class Room {
             throw new RuntimeException("The room has not been occupied!");
         } else {
             state = State.READY;
-            booking.checkOut();
+    		bookings.remove(booking);
         }
 	}
+
 
 
 }
