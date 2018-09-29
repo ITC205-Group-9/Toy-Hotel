@@ -114,6 +114,7 @@ class HotelTest {
         testCheckIn();
         doNothing().when(mockBooking).checkOut();
         hotel.checkOut(201);
+        verify(mockBooking, times(1)).checkOut();
     }
 
 

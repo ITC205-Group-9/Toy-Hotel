@@ -141,6 +141,7 @@ public class Hotel {
             throw new RuntimeException("The room has not checked in yet!");
         } else {
             booking.checkOut();
+            activeBookingsByRoomId.remove(roomId);
         }
 	}
 

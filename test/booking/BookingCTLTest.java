@@ -1,6 +1,7 @@
 package hotel.test.booking;
 
 import hotel.booking.BookingCTL;
+import hotel.booking.BookingUI;
 import hotel.credit.CreditAuthorizer;
 import hotel.credit.CreditCard;
 import hotel.credit.CreditCardType;
@@ -23,6 +24,8 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,6 +33,8 @@ class BookingCTLTest {
 
     @Mock Hotel mockHotel;
     @Mock CreditAuthorizer mockCreditAuthorizer;
+    @Mock
+    BookingUI mockBookingUI;
     Date date;
 
     @InjectMocks
@@ -55,6 +60,7 @@ class BookingCTLTest {
         when(mockCreditAuthorizer.authorize(any(CreditCard.class), anyDouble())).thenReturn(true);
         when(mockHotel.book(any(Room.class), any(Guest.class), any(Date.class), anyInt(), anyInt(), any(CreditCard.class))).thenReturn(Long.parseLong("20181012301"));
         bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 1, 1);
+        verify(mockHotel, times(1)).book(any(Room.class), any(Guest.class), any(Date.class), anyInt(), anyInt(), any(CreditCard.class));
     }
 
     @Test
@@ -68,6 +74,7 @@ class BookingCTLTest {
         when(mockCreditAuthorizer.authorize(any(CreditCard.class), anyDouble())).thenReturn(false);
         when(mockHotel.book(any(Room.class), any(Guest.class), any(Date.class), anyInt(), anyInt(), any(CreditCard.class))).thenReturn(Long.parseLong("20181012301"));
         bookingCTL.creditDetailsEntered(CreditCardType.MASTERCARD, 6, 123);
+
     }
 
 
