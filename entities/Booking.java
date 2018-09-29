@@ -25,7 +25,7 @@ public class Booking {
 	
 	private State state;
 
-
+    public Booking() {}
 	
 	public Booking(Guest guest, Room room, 
 			Date arrivalDate, int stayLength, 
