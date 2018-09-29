@@ -84,7 +84,6 @@ class HotelTest {
         hotel.checkIn(hotel.book(mockRoom, guest, arrivalDate, stayLength, occupantNumber, card));
         assertEquals(1, hotel.activeBookingsByRoomId.size());
         verify(mockBooking, times(1)).checkIn();
-        verify(mockRoom, times(1)).checkIn();
     }
 
     @Test

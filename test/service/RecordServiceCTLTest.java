@@ -46,7 +46,6 @@ class RecordServiceCTLTest {
         doNothing().when(hotel).addServiceCharge(anyInt(), any(ServiceType.class), anyDouble());
         recordServiceCTL.serviceDetailsEntered(ServiceType.ROOM_SERVICE, 20);
         verify(hotel, times(1)).addServiceCharge(anyInt(), any(ServiceType.class), anyDouble());
-        verify(recordServiceUI, calls(2));
     }
 
     @Test
