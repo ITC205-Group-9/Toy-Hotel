@@ -79,12 +79,11 @@ class HotelTest {
         doNothing().when(mockBooking).checkIn();
         when(mockBooking.getRoom()).thenReturn(mockRoom);
         when(mockRoom.getId()).thenReturn(201);
-        doNothing().when(mockRoom).checkin();
+        doNothing().when(mockRoom).checkIn();
         assertEquals(0, hotel.activeBookingsByRoomId.size());
         hotel.checkIn(hotel.book(mockRoom, guest, arrivalDate, stayLength, occupantNumber, card));
         assertEquals(1, hotel.activeBookingsByRoomId.size());
         verify(mockBooking, times(1)).checkIn();
-        verify(mockRoom, times(1)).checkin();
     }
 
     @Test
