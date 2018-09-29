@@ -114,7 +114,6 @@ public class Hotel {
 			throw new RuntimeException("There is not booking for the confirmation number exists!");
 		} else {
 		    booking.checkIn();
-		    booking.getRoom().checkin();
 		    activeBookingsByRoomId.put(booking.getRoom().getId(), booking);
         }
 	}
