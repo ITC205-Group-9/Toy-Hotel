@@ -49,7 +49,10 @@ public class RecordServiceCTL {
 	
 	
 	public void serviceDetailsEntered(ServiceType serviceType, double cost) {
-		if(state != State.SERVICE) throw new RuntimeException(String.format("RecordServiceCTL: serviceDetailsEntered : bad state : %s", state));
+		if(state != State.SERVICE) {
+			String megs = String.format("RecordServiceCTL: serviceDetailsEntered : bad state : %s", state);
+			throw new RuntimeException(megs);
+		}
 		hotel.addServiceCharge(this.roomNumber, serviceType, cost);
 		recordServiceUI.displayServiceChargeMessage(this.roomNumber, cost, serviceType.getDescription());
 		state = State.COMPLETED;
