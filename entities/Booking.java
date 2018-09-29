@@ -133,17 +133,27 @@ public class Booking {
 
 
 	public void checkIn() {
-		// TODO Auto-generated method stub
+		if (!isPending()){
+            String megs = String.format("Booking: check in : bad state : %s", state);
+            throw new RuntimeException(megs);
+        }
+        getRoom().checkIn();
+		state = State.CHECKED_IN;
 	}
 
 
 	public void addServiceCharge(ServiceType serviceType, double cost) {
-		// TODO Auto-generated method stub
+        charges.add(new ServiceCharge(serviceType, cost));
 	}
 
 
 	public void checkOut() {
-		// TODO Auto-generated method stub
+        if (!isCheckedIn()) {
+            String megs = String.format("Booking: check out : bad state : %s", state);
+            throw new RuntimeException(megs);
+        }
+        getRoom().checkout(this);
+        state = State.CHECKED_OUT;
 	}
 
 }
